@@ -241,12 +241,8 @@ export default function Profile() {
         view my listings
       </button>
       <p className="text-red-700 mt-6">{listingError && listingError}</p>
-      <div classname="flex flex-col gap-4">
-        <h1 className="text-center text-2xl font-semibold mt-7">
-          Your Properties
-        </h1>
-
-        {listingData.length > 0 &&
+        {listingData.length > 0 
+        &&
           listingData.map((listing) => (
             <div
               key={listing._id}
@@ -276,6 +272,5 @@ export default function Profile() {
             </div>
           ))}
       </div>
-    </div>
   );
 }
