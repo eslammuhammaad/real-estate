@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import {
   getDownloadURL,
   getStorage,
@@ -29,10 +30,6 @@ export default function Profile() {
   const [formData, setFormData] = useState({});
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-
-  console.log(file);
-  console.log(filePercentage);
-  console.log(formData);
 
   useEffect(() => {
     if (file) {
@@ -192,9 +189,12 @@ export default function Profile() {
           className="border p-3  rounded-lg"
           onChange={handleChange}
         />
-        <button disabled={loading} className="my-6 bg-gray-700 text-white p-3 rounded-lg hover:opacity-75 ">
+        <button disabled={loading} className="my-4 bg-gray-700 text-white p-3 rounded-lg hover:opacity-75 uppercase">
           {loading ? "Loading..." : "Update"}
         </button>
+        <Link to={"/create-listing"} className="bg-green-600 text-white text-center p-3 rounded-lg hover:opacity-75 uppercase">
+            Create Listing
+        </Link>
       </form>
       <div className="flex mt-6 justify-between">
         <span onClick={handleDelete} className="uppercase text-red-600 cursor-pointer hover:underline">
