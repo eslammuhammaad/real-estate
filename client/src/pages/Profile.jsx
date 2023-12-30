@@ -28,6 +28,8 @@ export default function Profile() {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [userUpdated, setUserUpdated] = useState(false);
   const [formData, setFormData] = useState({});
+  const [listingError, setListingError] = useState(false);
+  const [listingData, setListingData] = useState([]);
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
@@ -97,40 +99,52 @@ export default function Profile() {
     }
   };
 
-  const handleDelete =async ()=>{
+  const handleDelete = async () => {
     try {
       dispatch(deleteStart());
-      const res =await fetch(`/api/user/delete/${currentUser._id}`,{
-        method:'DELETE'
-      })
-      const data =await res.json();
-      if(data.success===false){
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
         dispatch(deleteFailure(data.message));
         return;
       }
       dispatch(deleteSuccess(data));
-
     } catch (error) {
       dispatch(deleteFailure(error.message));
     }
+  };
 
-  }
-
-  const handleSignout = async ()=>{
+  const handleSignout = async () => {
     try {
       signoutStart();
-      const res =await fetch('api/auth/signout')
+      const res = await fetch("api/auth/signout");
       const data = await res.json();
-      if(data.success===false){
+      if (data.success === false) {
         dispatch(signoutFailure(data.message));
         return;
       }
       dispatch(signoutSuccess(data));
-    }
-     catch (error) {
+    } catch (error) {
       dispatch(signoutFailure(error.message));
     }
-  }
+  };
+
+  const viewListings = async () => {
+    try {
+      setListingError(false);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const data = await res.json();
+      if (data.success === false) {
+        setListingError(data.message);
+        return;
+      }
+      setListingData(data);
+    } catch (error) {
+      setListingError(error.message);
+    }
+  };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -189,23 +203,79 @@ export default function Profile() {
           className="border p-3  rounded-lg"
           onChange={handleChange}
         />
-        <button disabled={loading} className="my-4 bg-gray-700 text-white p-3 rounded-lg hover:opacity-75 uppercase">
+        <button
+          disabled={loading}
+          className="my-4 bg-gray-700 text-white p-3 rounded-lg hover:opacity-75 uppercase"
+        >
           {loading ? "Loading..." : "Update"}
         </button>
-        <Link to={"/create-listing"} className="bg-green-600 text-white text-center p-3 rounded-lg hover:opacity-75 uppercase">
-            Create Listing
+        <Link
+          to={"/create-listing"}
+          className="bg-green-600 text-white text-center p-3 rounded-lg hover:opacity-75 uppercase"
+        >
+          Create Listing
         </Link>
       </form>
       <div className="flex mt-6 justify-between">
-        <span onClick={handleDelete} className="uppercase text-red-600 cursor-pointer hover:underline">
+        <span
+          onClick={handleDelete}
+          className="uppercase text-red-600 cursor-pointer hover:underline"
+        >
           Delete account
         </span>
-        <span onClick={handleSignout} className="uppercase text-red-600 cursor-pointer hover:underline">
+        <span
+          onClick={handleSignout}
+          className="uppercase text-red-600 cursor-pointer hover:underline"
+        >
           Sign Out
         </span>
       </div>
-      <p className="text-red-700 mt-6">{error?error:''}</p>
-      <p className="text-green-700 mt-6">{userUpdated?'Your Data Updated Successfully':''}</p>
+      <p className="text-red-700 mt-6">{error ? error : ""}</p>
+      <p className="text-green-700 mt-6">
+        {userUpdated ? "Your Data Updated Successfully" : ""}
+      </p>
+      <button
+        onClick={viewListings}
+        className="text-green-700 w-full hover:underline uppercase"
+      >
+        view my listings
+      </button>
+      <p className="text-red-700 mt-6">{listingError && listingError}</p>
+      <div classname="flex flex-col gap-4">
+        <h1 className="text-center text-2xl font-semibold mt-7">
+          Your Properties
+        </h1>
+
+        {listingData.length > 0 &&
+          listingData.map((listing) => (
+            <div
+              key={listing._id}
+              className="border rounded-lg p-3 flex justify-between items-center my-6 "
+            >
+              <Link
+                className="flex justify-between items-center gap-4"
+                to={`/listing/${listing._id}`}
+              >
+                <img
+                  src={listing.imageUrls[0]}
+                  alt="Cover Image"
+                  className="w-16 h-16 object-contain"
+                />
+                <p className="font-semibold flex-1 hover:underline truncate">
+                  {listing.name}
+                </p>
+              </Link>
+              <div className="flex flex-col">
+                <button className="text-red-600 hover:underline uppercase">
+                  delete
+                </button>
+                <button className="text-green-600 hover:underline uppercase">
+                  edit
+                </button>
+              </div>
+            </div>
+          ))}
+      </div>
     </div>
   );
 }
