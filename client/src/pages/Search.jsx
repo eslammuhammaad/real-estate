@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import PropertyCard from "../components/PropertyCard";
 
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
@@ -200,10 +201,17 @@ export default function Search() {
           </button>
         </form>
       </div>
-      <div className="p-7">
-        <h1 className="text-3xl font-semibold text-gray-700 mt-5 border-b">
+      <div className="flex-1">
+        <h1 className="text-3xl font-semibold text-gray-700 mt-5 p-3 border-b">
           Listing Result:
         </h1>
+        <div className="p-7 flex flex-wrap gap-4">
+            {!loading && properties.length ===0 && <h1 className="text-2xl font-semibold text-gray-700 zzzzzzzzzzzzzzzzzzzz p-3">No Matched Properties</h1>}
+            {loading && <h1 className="text-2xl font-semibold text-gray-700 w-full mt-5 text-center">Loading...</h1>}
+            {!loading && properties && properties.map((property)=>(
+                <PropertyCard key={property._id} property={property}/>
+            ))}
+        </div>
       </div>
     </div>
   );
