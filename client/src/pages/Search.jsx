@@ -14,6 +14,7 @@ export default function Search() {
   });
   const [loading, setLoading]=useState(false);
   const [properties, setProperties]=useState([]);
+  const [showMore, setShowMore]=useState(false);
   const navigate = useNavigate();
   console.log(properties);
   useEffect(()=>{
@@ -48,9 +49,15 @@ export default function Search() {
 
       const getProperties=async()=>{
         setLoading(true);
+        setShowMore(false);
         const searchQuery = urlParams.toString();
         const res = await fetch(`/api/listing/get?${searchQuery}`);
         const data = await res.json();
+        if(data.length>8){
+          setShowMore(true);
+        }else{
+          setShowMore(false);
+        }
         setProperties(data);
         setLoading(false);
       }
@@ -98,6 +105,18 @@ export default function Search() {
     urlParams.set("order", sidebarData.order);
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
+  }
+  const showMoreProperties=async()=>{
+    const startIndex=properties.length;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+    const res = await fetch(`/api/listing/get?${searchQuery}`);
+    const data = await res.json();
+    if(data.length<9){
+      setShowMore(false);
+    }
+    setProperties([...properties, ...data]);
   }
   return (
     <div className="flex flex-col md:flex-row">
@@ -211,8 +230,9 @@ export default function Search() {
             {!loading && properties && properties.map((property)=>(
                 <PropertyCard key={property._id} property={property}/>
             ))}
+            {showMore && <button onClick={showMoreProperties} className="p-3 text-center w-full text-green-700 hover:underline">Show More</button>}
         </div>
       </div>
-    </div>
+    </div> 
   );
 }
