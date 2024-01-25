@@ -8,8 +8,6 @@ import clsx from "clsx";
 
 const Header = () => {
   const { currentUser } = useSelector((state) => state.user);
-  const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
   const [isOpen, setOpen] = useState(false);
 
   return (

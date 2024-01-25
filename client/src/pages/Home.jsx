@@ -1,16 +1,38 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import SwiperCore from 'swiper';
 import 'swiper/css/bundle';
 import PropertyCard from '../components/PropertyCard';
+import { FaSearch } from "react-icons/fa";
+
 
 export default function Home() {
   const [offerProperties, setOfferProperties] = useState([]);
   const [saleProperties, setSaleProperties] = useState([]);
   const [rentProperties, setRentProperties] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+
+
   SwiperCore.use([Navigation]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("searchTerm", searchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermUrl = urlParams.get("searchTerm");
+    if (searchTermUrl) {
+      setSearchTerm(searchTermUrl);
+    }
+  }, [location.search]);
  
   useEffect(() => {
     const fetchOfferProperties = async () => {
@@ -48,21 +70,34 @@ export default function Home() {
   return (
     <div>
       <div className="text-gray-700  py-20 px-4">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto flex flex-col items-center">
           <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-4">
             Find your next{' '}
             <span className="text-blue-500">perfect</span> place with ease
           </h1>
-          <p className="text-gray-400 text-lg mb-6">
+          <p className="text-gray-400 text-lg  p-3">
             Infinity Estate is the best place to find your next perfect place to
             live. We have a wide range of properties for you to choose from.
+         
           </p>
-          <Link
-            to={'/search'}
-            className="text-lg md:text-xl bg-blue-500 text-white font-bold px-6 py-3 rounded-full hover:bg-blue-600 transition duration-300"
-          >
-            Let's get started...
-          </Link>
+          <form
+          onSubmit={handleSearch}
+          className="bg-gray-200 p-3 rounded-lg items-center  flex mt-10 justify-between w-full sm:w-[600px]
+          "
+        > 
+          <input
+            type="text"
+            placeholder="Enter Address or City"
+            className="bg-transparent focus:outline-none w-24 sm:w-64"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
+          />
+          <button>
+            <FaSearch className="text-blue-500" />
+          </button>
+        </form>
         </div>
       </div>
 
