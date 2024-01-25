@@ -7,7 +7,7 @@ import SignUp from "./pages/SignUp";
 import CreateListing from "./pages/CreateListing";
 import ProtectedRoute from "./components/protectedRoute";
 import UpdateListing from "./pages/UpdateListing";
-import Listing from "./pages/listing";
+import Listing from "./pages/Listing";
 import Header from "./components/Header";
 import Search from "./pages/Search";
 

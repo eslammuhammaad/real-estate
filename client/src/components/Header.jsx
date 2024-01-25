@@ -1,9 +1,8 @@
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { FaSearch } from "react-icons/fa";
 import { FiMenu } from "react-icons/fi";
 import { IoCloseOutline } from "react-icons/io5";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import clsx from "clsx";
 
 const Header = () => {
